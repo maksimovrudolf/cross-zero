@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Крестики-нолики</title>
+</head>
+<body>
+<script>
+    class CrossZero {
+        static get cellCount() {
+            return 9;
+        }
+
+        static get chars() {
+            return {"null": " ", "0": "0", "1": "X"};
+        };
+
+        static get combinations() {
+            return [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+        }
+
+        static get author() {
+            return "Rudolf Maksimov";
+        }
+
+        constructor() {
+            this._steps = 0;
+            this._moves = [];
+            this._previosMoveType = null;
+            this._winner = null;
+        }
+
+        start() {
+            for (let i = 0; i < CrossZero.cellCount; i++) {
+                this._moves[i] = null;
+            }
+
+            console.log('Игра начата');
+        }
+
+        makeMove(cellNumber, type) {
+            cellNumber -= 1;
+
+            if (this._moves[cellNumber] === null && this._previosMoveType !== type) {
+                this._steps++;
+                this._moves[cellNumber] = type;
+                this._previosMoveType = type;
+                this.showGrid();
+
+                if (this._steps > 4) {
+                    this._findWinner();
+                }
+            } else {
+                console.log('Error');
+            }
+        }
+
+        finish() {
+            this._reset();
+            console.log('Игра закончена');
+        }
+
+        showGrid() {
+            let grid = '';
+
+            for (let i = 0; i < this._moves.length; i++) {
+
+                grid += '[' + CrossZero.chars[this._moves[i]] + ']';
+
+                if ((i + 1) % 3 === 0) {
+                    grid += '\n';
+                }
+            }
+
+            console.log(grid);
+        }
+
+        showAuthor() {
+            console.log('Author: ' + CrossZero.author);
+        }
+
+        _reset() {
+            this._steps = 0;
+            this._moves = [];
+            this._previosMoveType = null;
+            this._winner = null;
+        }
+
+        _findWinner() {
+            for (let i = 0; i < CrossZero.combinations.length; i++) {
+                if (
+                    this._moves[CrossZero.combinations[i][0]] === this._moves[CrossZero.combinations[i][1]] &&
+                    this._moves[CrossZero.combinations[i][1]] === this._moves[CrossZero.combinations[i][2]] &&
+                    this._moves[CrossZero.combinations[i][0]] !== null
+                ) {
+                    this._winner = this._moves[CrossZero.combinations[i][0]];
+                    console.log('Winner - ' + CrossZero.chars[this._winner]);
+                    return;
+                }
+            }
+        }
+    }
+
+    const game = new CrossZero();
+
+    console.log(`
+game.start(); - начать игру
+game.makeMove(5, 1); - сделать ход (номер ячейки 1-9, тип 1 || 0)
+game.finish(); - завершить игру
+game.showGrid(); - отрисовать текущее состояние
+game.showAuthor(); - вывод информации об авторе
+`);
+</script>
+</body>
+</html>
